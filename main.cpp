@@ -1,9 +1,9 @@
-// Antônio
-// Felipe
+// Antônio Vinícius Costa Alves Ferreira - 2282
+// Felipe Soares dos Santos Silveira - 843
 // Kauã de Oliveira Ribeiro - 777
-// Livia
-// Luiz
-// Vitor
+// Lívia Vilela Ribeiro Guimarães - 797
+// Luiz Henrique Azevedo de Carvalho - 813
+// Vitor Nolasco Ynoguti - 818
 
 #include<iostream>
 #include <iomanip>
