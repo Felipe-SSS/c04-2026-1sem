@@ -16,10 +16,10 @@ Compilar e executar os arquivos manualmente.
 
 ### Compilar
 ```
-g++ main.c -o codigo
+g++ main.cpp btree.cpp calc.cpp extra.cpp graphs.cpp plot.cpp -o code
 ```
 
 ### Executar
 ```
-./codigo.exe
+./code.exe
 ```
