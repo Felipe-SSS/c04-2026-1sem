@@ -5,75 +5,75 @@
 // Luiz Henrique Azevedo de Carvalho - 813
 // Vitor Nolasco Ynoguti - 818
 
-#include<iostream>
+#include <iostream>
 #include <iomanip>
-#include<string>
+#include <string>
 
 using namespace std;
 
-struct palavra{
-    string ficticio;
+struct word{
+    string fictional;
     string real;
 };
 
-void cadastrar()
+void insert()
 {
-    cout << "\nFuncionalidade em construcao" << endl;
+    cout << "\nFeature in development." << endl;
 }
 
-void excluir()
+void remove()
 {
-    cout << "\nFuncionalidade em construcao" << endl;
+    cout << "\nFeature in development." << endl;
 }
 
-void significado()
+void meaning()
 {
-    cout << "\nFuncionalidade em construcao" << endl;
+    cout << "\nFeature in development." << endl;
 }
 
-void sinonimos()
+void synonyms()
 {
-    cout << "\nFuncionalidade em construcao" << endl;
+    cout << "\nFeature in development." << endl;
 }
 
-void similaridade()
+void similarity()
 {
-    cout << "\nFuncionalidade em construcao" << endl;
+    cout << "\nFeature in development." << endl;
 }
 
-void listarPorAlfabeto(){
-    cout << "\nFuncionalidade em construcao" << endl;
+void listByAlphabet(){
+    cout << "\nFeature in development." << endl;
 }
 
-void listarPorTamanho(){
-    cout << "\nFuncionalidade em construcao" << endl;
+void listBySize(){
+    cout << "\nFeature in development." << endl;
 }
 
-// Funcao responsavel por exibir o menu principal
+// Function responsible for displaying the main menu
 int menu() {
-    int opcao;
+    int option;
 
     while (true) {
-        cout << "\n=== MENU PRINCIPAL ===\n";
-        cout << "1. Cadastrar Palavra\n";
-        cout << "2. Excluir Palavra\n";
-        cout << "3. Significado\n";
-        cout << "4. Sinonimos\n";
-        cout << "5. Calcular Similaridade\n";
-        cout << "6. Listar Palavras em Ordem Alfabetica\n";
-        cout << "7. Listar Palavras por Tamanho\n";
-        cout << "8. Sair\n";
-        cout << "Escolha uma opcao: ";
+        cout << "\n=== MAIN MENU ===\n";
+        cout << "1. Insert Word\n";
+        cout << "2. Remove Word\n";
+        cout << "3. Meaning\n";
+        cout << "4. Synonyms\n";
+        cout << "5. Calculate Similarity\n";
+        cout << "6. List Words by Alphabetic Order\n";
+        cout << "7. List Words by Size\n";
+        cout << "8. Leave\n";
+        cout << "Pick an option: ";
         
-        cin >> opcao;
+        cin >> option;
         if(cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
-            cout << "Entrada invalida. Tente novamente.\n";
+            cout << "Invalid input. Try again.\n";
             continue;
         }
 
-        switch (opcao) {
+        switch (option) {
             case 1:
                 return 1;
 
@@ -99,88 +99,88 @@ int menu() {
                 return 0;
 
             default:
-                cout << "Opcao invalida.\n";
+                cout << "Invalid option.\n";
         }
     }
 }
 
-// Funcao para exibir o menu novamente ou encerrar o programa
-bool exibirMenuNovamente() {
-    int opcao;
+// Function to display menu again or end process
+bool displayMenuAgain() {
+    int option;
     
     while (true) {
-        cout << "\nDeseja realizar uma nova operacao?\n";
-        cout << "1. Sim\n";
-        cout << "0. Nao\n\n";
+        cout << "\nDo you wish to pick another option?\n";
+        cout << "1. Yes\n";
+        cout << "0. No\n\n";
 
-        cin >> opcao;
+        cin >> option;
         if(cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
-            cout << "Entrada invalida. Tente novamente.\n";
+            cout << "Invalid input. Try again.\n";
             continue;
         }
         
-        switch (opcao) {
+        switch (option) {
             case 0:
-                cout << "\nEncerrando o programa...\n";
+                cout << "\nEnding process...\n";
                 return false;
             case 1:
-                cout << "\nVoltando ao menu...\n";
+                cout << "\nReturning to the menu...\n";
                 return true;
             default:
-                cout << "Opcao invalida.\n";
+                cout << "Invalid option.\n";
         }
     }           
 }
 
 int main()
 {
-    // Variavel da escolha feita pelo usuario no menu
-    int opcao;
-    // Variavel que determina se o menu deve ser exibido ou nao
-    bool exibirMenu = true;
+    // Variable that represents the option the user picks from the menu
+    int option;
+    // Variable that determines if the menu should be displayed
+    bool displayMenu = true;
     
-    //Loop principal do codigo
+    // Main loop
     while (true) {
-        if (exibirMenu) {
-            opcao = menu();
+        if (displayMenu) {
+            option = menu();
         }
         else {
             break;
         }
         
-        // Logica responsavel por chamar as diferentes funcoes do programa baseado nas opcoes escolhidas pelo usuario
-        switch(opcao) {
+        // Logic responsible for calling the different functions based on the user's choice
+        switch(option) {
             case 0:
-                cout << "\nSaindo do programa...\n";
+                cout << "\nEnding process...\n";
                 return 0;
 
             case 1:
-                cadastrar();
+                insert();
                 break;
             case 2:
-                excluir();
+                remove();
                 break;
             case 3:
-                significado();
+                meaning();
                 break;
             case 4:
-                sinonimos();
+                synonyms();
                 break;
             case 5:
-                similaridade();
+                similarity();
                 break;
             case 6:
-                listarPorAlfabeto();
+                listByAlphabet();
                 break;
             case 7:
-                listarPorTamanho();
+                listBySize();
                 break;
         }
         
-        // Apos a execucao de uma opcao valida, o programa descobre se o usuario deseja realizar uma nova operacao ou se deseja sair, finalizando o programa
-        exibirMenu = exibirMenuNovamente();
+        // Following the execution of a valid option, as if the user would like to pick another on end the process
+        displayMenu = displayMenuAgain();
     }
 
     return 0;
