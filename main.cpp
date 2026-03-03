@@ -5,9 +5,9 @@
 // Luiz Henrique Azevedo de Carvalho - 813
 // Vitor Nolasco Ynoguti - 818
 
-#include<iostream>
+#include <iostream>
 #include <iomanip>
-#include<string>
+#include <string>
 
 using namespace std;
 
@@ -51,7 +51,7 @@ void listarPorTamanho(){
 
 // Funcao responsavel por exibir o menu principal
 int menu() {
-    int opcao;
+    int option;
 
     while (true) {
         cout << "\n=== MENU PRINCIPAL ===\n";
@@ -65,7 +65,7 @@ int menu() {
         cout << "8. Sair\n";
         cout << "Escolha uma opcao: ";
         
-        cin >> opcao;
+        cin >> option;
         if(cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
@@ -73,7 +73,7 @@ int menu() {
             continue;
         }
 
-        switch (opcao) {
+        switch (option) {
             case 1:
                 return 1;
 
@@ -106,14 +106,14 @@ int menu() {
 
 // Funcao para exibir o menu novamente ou encerrar o programa
 bool exibirMenuNovamente() {
-    int opcao;
+    int option;
     
     while (true) {
         cout << "\nDeseja realizar uma nova operacao?\n";
         cout << "1. Sim\n";
         cout << "0. Nao\n\n";
 
-        cin >> opcao;
+        cin >> option;
         if(cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
@@ -121,7 +121,7 @@ bool exibirMenuNovamente() {
             continue;
         }
         
-        switch (opcao) {
+        switch (option) {
             case 0:
                 cout << "\nEncerrando o programa...\n";
                 return false;
@@ -137,21 +137,21 @@ bool exibirMenuNovamente() {
 int main()
 {
     // Variavel da escolha feita pelo usuario no menu
-    int opcao;
+    int option;
     // Variavel que determina se o menu deve ser exibido ou nao
     bool exibirMenu = true;
     
     //Loop principal do codigo
     while (true) {
         if (exibirMenu) {
-            opcao = menu();
+            option = menu();
         }
         else {
             break;
         }
         
         // Logica responsavel por chamar as diferentes funcoes do programa baseado nas opcoes escolhidas pelo usuario
-        switch(opcao) {
+        switch(option) {
             case 0:
                 cout << "\nSaindo do programa...\n";
                 return 0;
