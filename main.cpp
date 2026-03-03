@@ -8,13 +8,14 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include "structs.h"
+#include "btree.h"
+#include "calc.h"
+#include "extra.h"
+#include "graphs.h"
+#include "plots.h"
 
 using namespace std;
-
-struct word{
-    string fictional;
-    string real;
-};
 
 void insert()
 {
@@ -41,11 +42,13 @@ void similarity()
     cout << "\nFeature in development." << endl;
 }
 
-void listByAlphabet(){
+void listByAlphabet()
+{
     cout << "\nFeature in development." << endl;
 }
 
-void listBySize(){
+void listBySize()
+{
     cout << "\nFeature in development." << endl;
 }
 
