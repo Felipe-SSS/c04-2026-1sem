@@ -29,11 +29,11 @@ void insert()
 
     if (file_words.is_open()) {
         int aux = 0;
-        Word word{};
+        Word word;
 
         while (getline(file_words, lineWords)) {
             if(aux == 0){
-                word = Word{};
+                word = Word();
                 word.word = lineWords;
                 cout << endl << "Word: " << word.word << endl;
             }
@@ -68,13 +68,13 @@ void insert()
 
     if (file_edges.is_open()) {
         int aux = 0;
-        Edge edge{};
+        Edge edge;
         while (getline(file_edges, lineEdges)) {
             if(aux == 0){
-                edge = Edge{};
+                edge = Edge();
                 edge.source = findWordPointer(lineEdges, dictionary);
 
-                if (edge.source == nullptr) {
+                if (edge.source == NULL) {
                     cerr << "\nSource word not found: " << lineEdges << endl;
                     aux = 0;
                     continue;
@@ -86,7 +86,7 @@ void insert()
             if(aux == 1){
                 edge.target = findWordPointer(lineEdges, dictionary);
 
-                if (edge.target == nullptr) {
+                if (edge.target == NULL) {
                     cerr << "Target word not found: " << lineEdges << endl;
                     aux = 0;
                     continue;
