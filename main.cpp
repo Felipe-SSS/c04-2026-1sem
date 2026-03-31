@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include "structs.h"
 #include "btree.h"
@@ -19,7 +21,94 @@ using namespace std;
 
 void insert()
 {
-    cout << "\nFeature in development." << endl;
+    ifstream file_words("seed/words.txt");
+    ifstream file_edges("seed/edges.txt");
+
+    Dictionary dictionary;
+    string lineWords, lineEdges;
+
+    if (file_words.is_open()) {
+        int aux = 0;
+        Word word{};
+
+        while (getline(file_words, lineWords)) {
+            if(aux == 0){
+                word = Word{};
+                word.word = lineWords;
+                cout << endl << "Word: " << word.word << endl;
+            }
+            if(aux == 1){
+                word.translation = lineWords;
+                cout << "Translation: " << word.translation << endl;
+            }
+            if(aux == 2){
+                stringstream ss(lineWords);
+                ss >> word.coordinates.x >> word.coordinates.y >> word.coordinates.z;
+
+                cout << "X: " << word.coordinates.x << endl;
+                cout << "Y: " << word.coordinates.y << endl;
+                cout << "Z: " << word.coordinates.z << endl;
+
+                dictionary.words.push_back(word);
+            }
+
+            aux = (aux + 1) % 3;
+        }
+        file_words.close();
+    } else {
+        cerr << "Unable to open file." << endl;
+    }
+
+    /* TODO: Create the edge insert logic using the following steps...
+        1. Read the edges.txt in batches of 3 lines (source, target, similarity);
+        2. Identify the source and target pointers by searching for the corresponding words in the dictionary.words list;
+        3. Create an edge with the source and target pointers and the similarity value;
+        4. Insert the edge into the dictionary.edges list.
+    */
+
+    if (file_edges.is_open()) {
+        int aux = 0;
+        Edge edge{};
+        while (getline(file_edges, lineEdges)) {
+            if(aux == 0){
+                edge = Edge{};
+                edge.source = findWordPointer(lineEdges, dictionary);
+
+                if (edge.source == nullptr) {
+                    cerr << "\nSource word not found: " << lineEdges << endl;
+                    aux = 0;
+                    continue;
+                }
+
+                cout << endl << "SourcePointer: " << edge.source << endl;
+                cout << "Source Word: " << edge.source->word << endl;
+            }
+            if(aux == 1){
+                edge.target = findWordPointer(lineEdges, dictionary);
+
+                if (edge.target == nullptr) {
+                    cerr << "Target word not found: " << lineEdges << endl;
+                    aux = 0;
+                    continue;
+                }
+
+                cout << "TargetPointer: " << edge.target << endl;
+                cout << "Target Word: " << edge.target->word << endl;
+                
+                // TODO: Fix the similarit calculation
+                edge.similarity = calculateSimilarity(*edge.source, *edge.target);
+                cout << "Similarity: " << edge.similarity << endl;
+
+                dictionary.edges.push_back(edge);
+            }
+
+            aux = (aux + 1) % 2;
+        }
+        file_edges.close();
+    } else {
+        cerr << "Unable to open file." << endl;
+    }
+
 }
 
 void remove()
@@ -34,6 +123,7 @@ void meaning()
 
 void synonyms()
 {
+    // TODO: Create the edge structure and determine word synonyms based on all words within a certain threshold of similarity
     cout << "\nFeature in development." << endl;
 }
 
