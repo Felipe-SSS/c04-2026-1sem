@@ -47,7 +47,11 @@ void insertWords(Dictionary& dictionary)
                 cout << "Y: " << word.coordinates.y << endl;
                 cout << "Z: " << word.coordinates.z << endl;
 
-                dictionary.words.push_back(word);
+                if (findWordPointer(word.word, dictionary) != NULL) {
+                    cout << "Word already exists, skipping: " << word.word << endl;
+                } else {
+                    dictionary.words.push_back(word);
+                }
             }
 
             aux = (aux + 1) % 3;
@@ -86,6 +90,21 @@ void insertEdges(Dictionary& dictionary){
                     cerr << "Target word not found: " << lineEdges << endl;
                     aux = 0;
                     continue;
+                }
+
+                if (edge.source == edge.target) {
+                    cerr << "Source and target are the same word: " << edge.source->word << endl;
+                    aux = 0;
+                    continue;
+                }
+
+                for (list<Edge>::iterator it = dictionary.edges.begin(); it != dictionary.edges.end(); it++) {
+                    if (it->source == edge.source && it->target == edge.target || 
+                        it->source == edge.target && it->target == edge.source) {
+                        cout << "Edge already exists between \"" << edge.source->word << "\" and \"" << edge.target->word << "\", skipping." << endl;
+                        aux = 0;
+                        break;
+                    }
                 }
 
                 edge.similarity = calculateSimilarity(*edge.source, *edge.target);
@@ -235,6 +254,7 @@ void synonyms(Dictionary& dictionary)
     }
 }
 
+// TODO: Use euclidean distance to calculate similarity between two words
 void similarity(Dictionary& dictionary)
 {
     string firstWord, secondWord;
