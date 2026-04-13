@@ -167,7 +167,31 @@ void synonyms(Dictionary& dictionary)
 
 void similarity(Dictionary& dictionary)
 {
-    cout << "\nFeature in development." << endl;
+    string firstWord, secondWord;
+
+    cout << "\n Enter the first word: ";
+    getline(cin >> ws, firstWord);
+    cout << "Enter the second word: ";
+    getline(cin >> ws, secondWord);
+
+    Word* word1 = findWordPointer(firstWord, dictionary);
+    Word* word2 = findWordPointer(secondWord, dictionary);
+
+    if (word1 == NULL) {
+        cout << "\nWord not found: " << firstWord << endl;
+        return;
+    }
+    else if (word2 == NULL) {
+        cout << "\nWord not found: " << secondWord << endl;
+        return;
+    }
+    else if (word1 == word2) {
+        cout << "\nThe words are the same: " << firstWord << endl;
+        return;
+    } else {
+        double similarity = calculateSimilarity(*word1, *word2);
+        cout << "\nSimilarity between \"" << firstWord << "\" and \"" << secondWord << "\": " << fixed << setprecision(2) << similarity << endl;
+    }
 }
 
 void listByAlphabet(Dictionary& dictionary)
