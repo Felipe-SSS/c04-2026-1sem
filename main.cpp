@@ -19,13 +19,11 @@
 
 using namespace std;
 
-void insert()
+void insertWords(Dictionary& dictionary)
 {
     ifstream file_words("seed/words.txt");
-    ifstream file_edges("seed/edges.txt");
 
-    Dictionary dictionary;
-    string lineWords, lineEdges;
+    string lineWords;
 
     if (file_words.is_open()) {
         int aux = 0;
@@ -59,12 +57,13 @@ void insert()
         cerr << "Unable to open file." << endl;
     }
 
-    /* TODO: Create the edge insert logic using the following steps...
-        1. Read the edges.txt in batches of 3 lines (source, target, similarity);
-        2. Identify the source and target pointers by searching for the corresponding words in the dictionary.words list;
-        3. Create an edge with the source and target pointers and the similarity value;
-        4. Insert the edge into the dictionary.edges list.
-    */
+    cout << "\nWords inserted successfully." << endl;
+}
+
+void insertEdges(Dictionary& dictionary){
+    ifstream file_edges("seed/edges.txt");
+
+    string lineEdges;
 
     if (file_edges.is_open()) {
         int aux = 0;
@@ -79,9 +78,6 @@ void insert()
                     aux = 0;
                     continue;
                 }
-
-                cout << endl << "SourcePointer: " << edge.source << endl;
-                cout << "Source Word: " << edge.source->word << endl;
             }
             if(aux == 1){
                 edge.target = findWordPointer(lineEdges, dictionary);
@@ -92,12 +88,7 @@ void insert()
                     continue;
                 }
 
-                cout << "TargetPointer: " << edge.target << endl;
-                cout << "Target Word: " << edge.target->word << endl;
-                
-                // TODO: Fix the similarit calculation
                 edge.similarity = calculateSimilarity(*edge.source, *edge.target);
-                cout << "Similarity: " << edge.similarity << endl;
 
                 dictionary.edges.push_back(edge);
             }
@@ -109,35 +100,82 @@ void insert()
         cerr << "Unable to open file." << endl;
     }
 
+    cout << "\nEdges inserted successfully." << endl;
 }
 
-void remove()
+void removeWords(Dictionary& dictionary)
 {
     cout << "\nFeature in development." << endl;
 }
 
-void meaning()
+void removeEdges(Dictionary& dictionary)
 {
     cout << "\nFeature in development." << endl;
 }
 
-void synonyms()
+void meaning(Dictionary& dictionary)
 {
-    // TODO: Create the edge structure and determine word synonyms based on all words within a certain threshold of similarity
+    string userWord;
+    cout << "\nEnter the word to search: ";
+    getline(cin >> ws, userWord);
+    
+    Word* foundWord = findWordPointer(userWord, dictionary);
+    
+    if (foundWord == NULL) {
+        cout << "\nWord not found: " << userWord << endl;
+    } else {
+        cout << "\nWord: " << foundWord->word << endl;
+        cout << "Translation: " << foundWord->translation << endl;
+    }
+}
+
+void synonyms(Dictionary& dictionary)
+{
+    string userWord;
+    cout << "\nEnter the word to find synonyms: ";
+    getline(cin >> ws, userWord);
+    
+    Word* foundWord = findWordPointer(userWord, dictionary);
+    
+    if (foundWord == NULL) {
+        cout << "\nWord not found: " << userWord << endl;
+        return;
+    }
+    
+    list<Word*> synonymsList;
+    
+    for (list<Edge>::iterator it = dictionary.edges.begin(); it != dictionary.edges.end(); it++) {
+        if (it->similarity > 70.0) {
+            if (it->source == foundWord) {
+                synonymsList.push_back(it->target);
+            }
+            else if (it->target == foundWord) {
+                synonymsList.push_back(it->source);
+            }
+        }
+    }
+    
+    if (synonymsList.empty()) {
+        cout << "\nNo synonyms found for: " << userWord << endl;
+    } else {
+        cout << "\nSynonyms for \"" << userWord << "\":" << endl;
+        for (list<Word*>::iterator it = synonymsList.begin(); it != synonymsList.end(); it++) {
+            cout << "  - " << (*it)->word << " (" << (*it)->translation << ")" << endl;
+        }
+    }
+}
+
+void similarity(Dictionary& dictionary)
+{
     cout << "\nFeature in development." << endl;
 }
 
-void similarity()
+void listByAlphabet(Dictionary& dictionary)
 {
     cout << "\nFeature in development." << endl;
 }
 
-void listByAlphabet()
-{
-    cout << "\nFeature in development." << endl;
-}
-
-void listBySize()
+void listBySize(Dictionary& dictionary)
 {
     cout << "\nFeature in development." << endl;
 }
@@ -149,13 +187,15 @@ int menu() {
     while (true) {
         cout << "\n=== MAIN MENU ===\n";
         cout << "1. Insert Word\n";
-        cout << "2. Remove Word\n";
-        cout << "3. Meaning\n";
-        cout << "4. Synonyms\n";
-        cout << "5. Calculate Similarity\n";
-        cout << "6. List Words by Alphabetic Order\n";
-        cout << "7. List Words by Size\n";
-        cout << "8. Leave\n";
+        cout << "2. Insert Edge\n";
+        cout << "3. Remove Word\n";
+        cout << "4. Remove Edge\n";
+        cout << "5. Meaning\n";
+        cout << "6. Synonyms\n";
+        cout << "7. Calculate Similarity\n";
+        cout << "8. List Words by Alphabetic Order\n";
+        cout << "9. List Words by Size\n";
+        cout << "0. Leave\n";
         cout << "Pick an option: ";
         
         cin >> option;
@@ -167,6 +207,9 @@ int menu() {
         }
 
         switch (option) {
+            case 0:
+                return 0;
+
             case 1:
                 return 1;
 
@@ -189,7 +232,10 @@ int menu() {
                 return 7;
 
             case 8:
-                return 0;
+                return 8;
+
+            case 9:
+                return 9;
 
             default:
                 cout << "Invalid option.\n";
@@ -228,7 +274,9 @@ bool displayMenuAgain() {
 }
 
 int main()
-{
+{   
+    // Global dictionary variable that will be used across the different functions of this code
+    Dictionary dictionary;
     // Variable that represents the option the user picks from the menu
     int option;
     // Variable that determines if the menu should be displayed
@@ -250,25 +298,31 @@ int main()
                 return 0;
 
             case 1:
-                insert();
+                insertWords(dictionary);
                 break;
             case 2:
-                remove();
+                insertEdges(dictionary);
                 break;
             case 3:
-                meaning();
+                removeWords(dictionary);
                 break;
             case 4:
-                synonyms();
+                removeEdges(dictionary);
                 break;
             case 5:
-                similarity();
+                meaning(dictionary);
                 break;
             case 6:
-                listByAlphabet();
+                synonyms(dictionary);
                 break;
             case 7:
-                listBySize();
+                similarity(dictionary);
+                break;
+            case 8:
+                listByAlphabet(dictionary);
+                break;
+            case 9:
+                listBySize(dictionary);
                 break;
         }
         
