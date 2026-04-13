@@ -105,12 +105,82 @@ void insertEdges(Dictionary& dictionary){
 
 void removeWords(Dictionary& dictionary)
 {
-    cout << "\nFeature in development." << endl;
+    string userWord;
+    cout << "\nEnter the word to remove: ";
+    getline(cin >> ws, userWord);
+
+    Word* wordToRemove = findWordPointer(userWord, dictionary);
+
+    if (wordToRemove == NULL) {
+        cout << "\nWord not found: " << userWord << endl;
+        return;
+    }
+
+    int removedEdges = 0;
+    for (list<Edge>::iterator it = dictionary.edges.begin(); it != dictionary.edges.end();) {
+        if (it->source == wordToRemove || it->target == wordToRemove) {
+            it = dictionary.edges.erase(it);
+            removedEdges++;
+        } else {
+            it++;
+        }
+    }
+
+    for (list<Word>::iterator it = dictionary.words.begin(); it != dictionary.words.end(); it++) {
+        if (it->word == userWord) {
+            dictionary.words.erase(it);
+            cout << "\nWord removed: " << userWord << endl;
+            cout << "Edges removed: " << removedEdges << endl;
+            return;
+        }
+    }
 }
 
 void removeEdges(Dictionary& dictionary)
 {
-    cout << "\nFeature in development." << endl;
+    string firstWord;
+    string secondWord;
+
+    cout << "\nEnter the first word: ";
+    getline(cin >> ws, firstWord);
+    cout << "Enter the second word: ";
+    getline(cin >> ws, secondWord);
+
+    Word* first = findWordPointer(firstWord, dictionary);
+    Word* second = findWordPointer(secondWord, dictionary);
+
+    if (first == NULL) {
+        cout << "\nWord not found: " << firstWord << endl;
+        return;
+    }
+    if (second == NULL) {
+        cout << "\nWord not found: " << secondWord << endl;
+        return;
+    }
+    if (first == second) {
+        cout << "\nThe words are the same: " << firstWord << endl;
+        return;
+    }
+
+    int removedEdges = 0;
+
+    for (list<Edge>::iterator it = dictionary.edges.begin(); it != dictionary.edges.end();) {
+        bool isDirectEdge = (it->source == first && it->target == second);
+        bool isReverseEdge = (it->source == second && it->target == first);
+
+        if (isDirectEdge || isReverseEdge) {
+            it = dictionary.edges.erase(it);
+            removedEdges++;
+        } else {
+            it++;
+        }
+    }
+
+    if (removedEdges == 0) {
+        cout << "\nNo direct edges found between \"" << firstWord << "\" and \"" << secondWord << "\"." << endl;
+    } else {
+        cout << "\nRemoved edges between \"" << firstWord << "\" and \"" << secondWord << "\": " << removedEdges << endl;
+    }
 }
 
 void meaning(Dictionary& dictionary)
@@ -181,17 +251,17 @@ void similarity(Dictionary& dictionary)
         cout << "\nWord not found: " << firstWord << endl;
         return;
     }
-    else if (word2 == NULL) {
+    if (word2 == NULL) {
         cout << "\nWord not found: " << secondWord << endl;
         return;
     }
-    else if (word1 == word2) {
+    if (word1 == word2) {
         cout << "\nThe words are the same: " << firstWord << endl;
         return;
-    } else {
-        double similarity = calculateSimilarity(*word1, *word2);
-        cout << "\nSimilarity between \"" << firstWord << "\" and \"" << secondWord << "\": " << fixed << setprecision(2) << similarity << endl;
     }
+    
+    double similarity = calculateSimilarity(*word1, *word2);
+    cout << "\nSimilarity between \"" << firstWord << "\" and \"" << secondWord << "\": " << fixed << setprecision(2) << similarity << endl;
 }
 
 void listByAlphabet(Dictionary& dictionary)
