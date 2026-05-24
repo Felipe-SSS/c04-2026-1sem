@@ -50,7 +50,12 @@ void insertWords(Dictionary& dictionary)
                 if (findWordPointer(word.word, dictionary) != NULL) {
                     cout << "Word already exists, skipping: " << word.word << endl;
                 } else {
+                    // Insert the word into the dictionary
                     dictionary.words.push_back(word);
+                    Word* insertedWord = &dictionary.words.back();
+                    // Insert the word into both trees
+                    insert(dictionary.alphabetRoot, insertedWord, 0);
+                    insert(dictionary.sizeRoot, insertedWord, 1);
                 }
             }
 
@@ -148,6 +153,8 @@ void removeWords(Dictionary& dictionary)
     for (list<Word>::iterator it = dictionary.words.begin(); it != dictionary.words.end(); it++) {
         if (it->word == userWord) {
             dictionary.words.erase(it);
+            remove(dictionary.alphabetRoot, userWord, 0);
+            remove(dictionary.sizeRoot, userWord, 1);
             cout << "\nWord removed: " << userWord << endl;
             cout << "Edges removed: " << removedEdges << endl;
             return;
@@ -286,12 +293,24 @@ void similarity(Dictionary& dictionary)
 
 void listByAlphabet(Dictionary& dictionary)
 {
-    cout << "\nFeature in development." << endl;
+    cout << "\nWords by alphabetic order:" << endl;
+    if (dictionary.alphabetRoot == NULL) {
+        cout << "No words available" << endl;
+        return;
+    }
+
+    show_in_order(dictionary.alphabetRoot);
 }
 
 void listBySize(Dictionary& dictionary)
 {
-    cout << "\nFeature in development." << endl;
+    cout << "\nWords by size:" << endl;
+    if (dictionary.sizeRoot == NULL) {
+        cout << "No words available" << endl;
+        return;
+    }
+
+    show_in_order(dictionary.sizeRoot);
 }
 
 // Function responsible for displaying the main menu
@@ -336,7 +355,7 @@ bool displayMenuAgain() {
     while (true) {
         cout << "\nDo you wish to pick another option?\n";
         cout << "1. Yes\n";
-        cout << "0. No\n\n";
+        cout << "0. No\n";
 
         cin >> option;
         if(cin.fail()) {
@@ -415,6 +434,10 @@ int main()
         // Following the execution of a valid option, as if the user would like to pick another on end the process
         displayMenu = displayMenuAgain();
     }
+
+    // Clean up memory before ending the program
+    destruct(dictionary.alphabetRoot);
+    destruct(dictionary.sizeRoot);
 
     return 0;
 }

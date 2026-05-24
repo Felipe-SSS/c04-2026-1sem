@@ -8,6 +8,8 @@
 
 using namespace std;
 
+struct TreeNode;
+
 struct Coordinates
 {
     int x; // First Letter
@@ -33,6 +35,14 @@ struct Dictionary
 {
     list<Word> words;
     list<Edge> edges;
+    TreeNode* alphabetRoot;
+    TreeNode* sizeRoot;
+
+    Dictionary()
+    {
+        alphabetRoot = NULL;
+        sizeRoot = NULL;
+    }
 };
 
 #endif // STRUCTS_H
