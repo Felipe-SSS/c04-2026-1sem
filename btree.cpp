@@ -25,6 +25,59 @@ static int compareBySize(const Word* leftWord, const Word* rightWord)
     return compareAlphabetic(leftWord->word, rightWord->word);
 }
 
+static int treeHeight(TreeNode* current)
+{
+	if (current == NULL) {
+		return 0;
+	}
+
+	int leftHeight = treeHeight(current->left);
+	int rightHeight = treeHeight(current->right);
+	return 1 + ((leftHeight > rightHeight) ? leftHeight : rightHeight);
+}
+
+static TreeNode* rotateRight(TreeNode* current)
+{
+	TreeNode* leftChild = current->left;
+	TreeNode* transferSubtree = leftChild->right;
+
+	leftChild->right = current;
+	current->left = transferSubtree;
+
+	return leftChild;
+}
+
+static TreeNode* rotateLeft(TreeNode* current)
+{
+	TreeNode* rightChild = current->right;
+	TreeNode* transferSubtree = rightChild->left;
+
+	rightChild->left = current;
+	current->right = transferSubtree;
+
+	return rightChild;
+}
+
+static TreeNode* rebalance(TreeNode* current)
+{
+	if (current == NULL) {
+		return current;
+	}
+
+	int balance = treeHeight(current->left) - treeHeight(current->right);
+
+	if (balance > 1 || balance < -1) {
+		int leftBalance = treeHeight(current->left == NULL ? NULL : current->left->left)
+			- treeHeight(current->left == NULL ? NULL : current->left->right);
+		if (leftBalance < 0) {
+			current->left = rotateLeft(current->left);
+		}
+		return rotateRight(current);
+	}
+
+	return current;
+}
+
 static TreeNode* find_less_save_right(TreeNode*& current)
 {
 	if (current->left != NULL) {
@@ -56,41 +109,49 @@ void insert(TreeNode*& current, Word* data, int option)
 			insert(current->right, data, option);
 		}
 	}
+
+	current = rebalance(current);
 }
 
-bool remove(TreeNode*& current, const string& data, int option)
-{
-	if (current == NULL) {
+bool remove(TreeNode*& current, const string& data, int option) {
+	bool removed = false;
+    
+    if (current == NULL) {
 		return false;
 	} else if (data == current->data->word) {
 		TreeNode* temp = current;
 		if (current->right == NULL) {
 			current = current->left;
+			delete(temp);
 		} else if (current->left == NULL) {
 			current = current->right;
+			delete(temp);
 		} else {
 			temp = find_less_save_right(current->right);
 			current->data = temp->data;
+		    delete(temp);
 		}
-		delete(temp);
-		return true;
+		removed = true;
 	} else {
 		if (option == 0) {
 			if (data < current->data->word) {
-				return remove(current->left, data, option);
+				removed = remove(current->left, data, option);
 			} else {
-				return remove(current->right, data, option);
+				removed = remove(current->right, data, option);
 			}
 		} else {
 			Word probe;
 			probe.word = data;
 			if (compareBySize(&probe, current->data) < 0) {
-				return remove(current->left, data, option);
+				removed = remove(current->left, data, option);
 			} else {
-				return remove(current->right, data, option);
+				removed = remove(current->right, data, option);
 			}
 		}
 	}
+
+	current = rebalance(current);
+	return removed;
 }
 
 void show_in_order(TreeNode* current)

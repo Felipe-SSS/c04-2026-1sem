@@ -266,7 +266,7 @@ void similarity(Dictionary& dictionary)
 {
     string firstWord, secondWord;
 
-    cout << "\n Enter the first word: ";
+    cout << "\nEnter the first word: ";
     getline(cin >> ws, firstWord);
     cout << "Enter the second word: ";
     getline(cin >> ws, secondWord);
