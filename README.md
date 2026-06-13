@@ -16,7 +16,7 @@ Compilar e executar os arquivos manualmente.
 
 ### Compilar
 ```
-g++ main.cpp btree.cpp calc.cpp extra.cpp graphs.cpp plot.cpp -o code
+g++ main.cpp btree.cpp extra.cpp graphs.cpp plots.cpp -o code
 ```
 
 ### Executar

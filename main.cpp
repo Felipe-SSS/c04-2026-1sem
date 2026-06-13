@@ -12,7 +12,6 @@
 #include <string>
 #include "structs.h"
 #include "btree.h"
-#include "calc.h"
 #include "extra.h"
 #include "graphs.h"
 #include "plots.h"
@@ -370,7 +369,6 @@ void synonyms(Dictionary& dictionary)
     }
 }
 
-// TODO: Use euclidean distance to calculate similarity between two words
 void similarity(Dictionary& dictionary)
 {
     string firstWord, secondWord;
@@ -439,6 +437,8 @@ int menu() {
         cout << "9. Calculate Similarity\n";
         cout << "10. List Words by Alphabetic Order\n";
         cout << "11. List Words by Size\n";
+        cout << "12. Build Complete Graph\n";
+        cout << "13. Convex Hull Perimeter\n";
         cout << "0. Leave\n";
         cout << "Pick an option: ";
         
@@ -451,7 +451,7 @@ int menu() {
             continue;
         }
         
-        if (option < 0 || option > 11) {
+        if (option < 0 || option > 13) {
             cout << "Invalid option. Try again.\n";
             return menu();
         }
@@ -548,6 +548,16 @@ int main()
             case 11:
                 listBySize(dictionary);
                 break;
+            case 12:
+                buildAndDisplayCompleteGraph(dictionary);
+                break;
+            case 13: {
+                double perim = convexHullPerimeter(dictionary);
+                if (perim > 0.0) {
+                    cout << "Perimeter: " << fixed << setprecision(2) << perim << endl;
+                }
+                break;
+            }
         }
         
         // Following the execution of a valid option, as if the user would like to pick another on end the process
