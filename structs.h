@@ -12,15 +12,15 @@ struct TreeNode;
 
 struct Coordinates
 {
-    int x; // First Letter
-    int y; // Number of characters
-    int z; // Synonyms
+    float x; // First Letter
+    float y; // Number of characters
+    float z; // Synonyms
 };
 
 struct Word
 {
     string word;
-    string translation;
+    list<string> translations;
     Coordinates coordinates;
 };
 

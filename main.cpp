@@ -19,7 +19,25 @@
 
 using namespace std;
 
-void insertWords(Dictionary& dictionary)
+list<string> parseTranslations(const string& translationsLine)
+{
+    list<string> translations;
+    string translation;
+    stringstream ss(translationsLine);
+
+    while (getline(ss, translation, ',')) {
+        size_t start = translation.find_first_not_of(" \t");
+        size_t end = translation.find_last_not_of(" \t");
+
+        if (start != string::npos) {
+            translations.push_back(translation.substr(start, end - start + 1));
+        }
+    }
+
+    return translations;
+}
+
+void insertWordsFile(Dictionary& dictionary)
 {
     ifstream file_words("seed/words.txt");
 
@@ -36,8 +54,10 @@ void insertWords(Dictionary& dictionary)
                 cout << endl << "Word: " << word.word << endl;
             }
             if(aux == 1){
-                word.translation = lineWords;
-                cout << "Translation: " << word.translation << endl;
+                word.translations = parseTranslations(lineWords);
+                cout << "Translations: ";
+                printTranslations(word.translations);
+                cout << endl;
             }
             if(aux == 2){
                 stringstream ss(lineWords);
@@ -69,7 +89,7 @@ void insertWords(Dictionary& dictionary)
     cout << "\nWords inserted successfully." << endl;
 }
 
-void insertEdges(Dictionary& dictionary){
+void insertEdgesFile(Dictionary& dictionary){
     ifstream file_edges("seed/edges.txt");
 
     string lineEdges;
@@ -125,6 +145,91 @@ void insertEdges(Dictionary& dictionary){
     }
 
     cout << "\nEdges inserted successfully." << endl;
+}
+
+// FIX: Code ending after inserting the word
+void insertWordsTerminal(Dictionary& dictionary)
+{
+    string userWord;
+    string userTranslation;
+    double x, y, z;
+
+    cout << "\nEnter the word: ";
+    getline(cin >> ws, userWord);
+    cout << "Enter the translations (Separated by comma): ";
+    getline(cin >> ws, userTranslation);
+    cout << "Enter the coordinates (x y z): ";
+    cin >> x >> y >> z;
+    cin.ignore(1000, '\n');
+
+    if (findWordPointer(userWord, dictionary) != NULL) {
+        cout << "\nWord already exists, skipping: " << userWord << endl;
+        return;
+    }
+
+    Word word;
+    word = Word();
+    word.word = userWord;
+    word.translations = parseTranslations(userTranslation);
+    word.coordinates.x = x;
+    word.coordinates.y = y;
+    word.coordinates.z = z;
+
+    if (findWordPointer(word.word, dictionary) != NULL) {
+        cout << "Word already exists, skipping: " << word.word << endl;
+    } else {
+        // Insert the word into the dictionary
+        cout << "\nWord inserted successfully: " << userWord << endl;
+        dictionary.words.push_back(word);
+        Word* insertedWord = &dictionary.words.back();
+        // Insert the word into both trees
+        insert(dictionary.alphabetRoot, insertedWord, 0);
+        insert(dictionary.sizeRoot, insertedWord, 1);
+    }
+}
+
+void insertEdgesTerminal(Dictionary& dictionary)
+{
+    string firstWord;
+    string secondWord;
+
+    cout << "\nEnter the first word: ";
+    getline(cin >> ws, firstWord);
+    cout << "Enter the second word: ";
+    getline(cin >> ws, secondWord);
+
+    Word* first = findWordPointer(firstWord, dictionary);
+    Word* second = findWordPointer(secondWord, dictionary);
+
+    if (first == NULL) {
+        cout << "\nWord not found: " << firstWord << endl;
+        return;
+    }
+    if (second == NULL) {
+        cout << "\nWord not found: " << secondWord << endl;
+        return;
+    }
+    if (first == second) {
+        cout << "\nThe words are the same: " << firstWord << endl;
+        return;
+    }
+
+    for (list<Edge>::iterator it = dictionary.edges.begin(); it != dictionary.edges.end(); it++) {
+        if (it->source == first && it->target == second || 
+            it->source == second && it->target == first) {
+            cout << "\nEdge already exists between \"" << firstWord << "\" and \"" << secondWord << "\", skipping." << endl;
+            return;
+        }
+    }
+
+    Edge newEdge;
+    newEdge.source = first;
+    newEdge.target = second;
+    newEdge.similarity = calculateSimilarity(*first, *second);
+
+    dictionary.edges.push_back(newEdge);
+
+    cout << "\nEdge inserted successfully between \"" << firstWord << "\" and \"" << secondWord << "\" with similarity: " << fixed << setprecision(2) << newEdge.similarity << endl;
 }
 
 void removeWords(Dictionary& dictionary)
@@ -221,7 +326,9 @@ void meaning(Dictionary& dictionary)
         cout << "\nWord not found: " << userWord << endl;
     } else {
         cout << "\nWord: " << foundWord->word << endl;
-        cout << "Translation: " << foundWord->translation << endl;
+        cout << "Translations: ";
+        printTranslations(foundWord->translations);
+        cout << endl;
     }
 }
 
@@ -256,7 +363,9 @@ void synonyms(Dictionary& dictionary)
     } else {
         cout << "\nSynonyms for \"" << userWord << "\":" << endl;
         for (list<Word*>::iterator it = synonymsList.begin(); it != synonymsList.end(); it++) {
-            cout << "  - " << (*it)->word << " (" << (*it)->translation << ")" << endl;
+            cout << "  - " << (*it)->word << " (";
+            printTranslations((*it)->translations);
+            cout << ")" << endl;
         }
     }
 }
@@ -319,19 +428,22 @@ int menu() {
 
     while (true) {
         cout << "\n=== MAIN MENU ===\n";
-        cout << "1. Insert Word\n";
-        cout << "2. Insert Edge\n";
-        cout << "3. Remove Word\n";
-        cout << "4. Remove Edge\n";
-        cout << "5. Meaning\n";
-        cout << "6. Synonyms\n";
-        cout << "7. Calculate Similarity\n";
-        cout << "8. List Words by Alphabetic Order\n";
-        cout << "9. List Words by Size\n";
+        cout << "1. Insert Words by File\n";
+        cout << "2. Insert Edges by File\n";
+        cout << "3. Insert Word by Terminal\n";
+        cout << "4. Insert Edge by Terminal\n";
+        cout << "5. Remove Word\n";
+        cout << "6. Remove Edge\n";
+        cout << "7. Meaning\n";
+        cout << "8. Synonyms\n";
+        cout << "9. Calculate Similarity\n";
+        cout << "10. List Words by Alphabetic Order\n";
+        cout << "11. List Words by Size\n";
         cout << "0. Leave\n";
         cout << "Pick an option: ";
         
         cin >> option;
+        cin.ignore(1000, '\n');
         if(cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
@@ -339,7 +451,7 @@ int menu() {
             continue;
         }
         
-        if (option < 0 || option > 9) {
+        if (option < 0 || option > 11) {
             cout << "Invalid option. Try again.\n";
             return menu();
         }
@@ -358,6 +470,7 @@ bool displayMenuAgain() {
         cout << "0. No\n";
 
         cin >> option;
+        cin.ignore(1000, '\n');
         if(cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
@@ -403,30 +516,36 @@ int main()
                 return 0;
 
             case 1:
-                insertWords(dictionary);
+                insertWordsFile(dictionary);
                 break;
             case 2:
-                insertEdges(dictionary);
+                insertEdgesFile(dictionary);
                 break;
             case 3:
-                removeWords(dictionary);
+                insertWordsTerminal(dictionary);
                 break;
             case 4:
-                removeEdges(dictionary);
+                insertEdgesTerminal(dictionary);
                 break;
             case 5:
-                meaning(dictionary);
+                removeWords(dictionary);
                 break;
             case 6:
-                synonyms(dictionary);
+                removeEdges(dictionary);
                 break;
             case 7:
-                similarity(dictionary);
+                meaning(dictionary);
                 break;
             case 8:
-                listByAlphabet(dictionary);
+                synonyms(dictionary);
                 break;
             case 9:
+                similarity(dictionary);
+                break;
+            case 10:
+                listByAlphabet(dictionary);
+                break;
+            case 11:
                 listBySize(dictionary);
                 break;
         }

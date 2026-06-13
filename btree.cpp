@@ -3,6 +3,16 @@
 
 using namespace std;
 
+void printTranslations(const list<string>& translations)
+{
+	for (list<string>::const_iterator it = translations.begin(); it != translations.end(); it++) {
+		if (it != translations.begin()) {
+			cout << ", ";
+		}
+		cout << *it;
+	}
+}
+
 static int compareAlphabetic(const string& leftWord, const string& rightWord)
 {
 	if (leftWord < rightWord) {
@@ -160,7 +170,9 @@ void show_in_order(TreeNode* current)
 		if (current->left != NULL) {
 			show_in_order(current->left);
 		}
-		cout << current->data->word << " - " << current->data->translation << endl;
+		cout << current->data->word << " - ";
+		printTranslations(current->data->translations);
+		cout << " - (" << current->data->coordinates.x << ", " << current->data->coordinates.y << ", " << current->data->coordinates.z << ")" << endl;
 		if (current->right != NULL) {
 			show_in_order(current->right);
 		}
